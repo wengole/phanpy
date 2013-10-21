@@ -1,0 +1,1 @@
+web: gunicorn --pythonpath="$PWD/phanpy" config.wsgi:application
