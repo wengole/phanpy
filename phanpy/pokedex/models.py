@@ -4,6 +4,8 @@ from django.db import models
 
 
 class Abilities(models.Model):
+    # TODO: Merge AbilityNames into here (we only care about English)
+    # TODO: Merge AbilityProse into here
     id = models.IntegerField(primary_key=True)
     identifier = models.CharField(max_length=24)
     generation = models.ForeignKey('Generations')
@@ -12,26 +14,6 @@ class Abilities(models.Model):
     class Meta:
         managed = False
         db_table = 'abilities'
-
-
-class AbilityChangelog(models.Model):
-    id = models.IntegerField(primary_key=True)
-    ability = models.ForeignKey(Abilities)
-    changed_in_version_group = models.ForeignKey('VersionGroups')
-
-    class Meta:
-        managed = False
-        db_table = 'ability_changelog'
-
-
-class AbilityChangelogProse(models.Model):
-    ability_changelog = models.ForeignKey(AbilityChangelog)
-    local_language = models.ForeignKey('Languages')
-    effect = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'ability_changelog_prose'
 
 
 class AbilityFlavorText(models.Model):
@@ -66,441 +48,6 @@ class AbilityProse(models.Model):
         db_table = 'ability_prose'
 
 
-class Berries(models.Model):
-    id = models.IntegerField(primary_key=True)
-    item = models.ForeignKey('Items')
-    firmness = models.ForeignKey('BerryFirmness')
-    natural_gift_power = models.IntegerField(blank=True, null=True)
-    natural_gift_type = models.ForeignKey('Types', blank=True, null=True)
-    size = models.IntegerField()
-    max_harvest = models.IntegerField()
-    growth_time = models.IntegerField()
-    soil_dryness = models.IntegerField()
-    smoothness = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'berries'
-
-
-class BerryFirmness(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=10)
-
-    class Meta:
-        managed = False
-        db_table = 'berry_firmness'
-
-
-class BerryFirmnessNames(models.Model):
-    berry_firmness = models.ForeignKey(BerryFirmness)
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=10)
-
-    class Meta:
-        managed = False
-        db_table = 'berry_firmness_names'
-
-
-class BerryFlavors(models.Model):
-    berry = models.ForeignKey(Berries)
-    contest_type = models.ForeignKey('ContestTypes')
-    flavor = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'berry_flavors'
-
-
-class ConquestEpisodeNames(models.Model):
-    episode = models.ForeignKey('ConquestEpisodes')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=30)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_episode_names'
-
-
-class ConquestEpisodeWarriors(models.Model):
-    episode = models.ForeignKey('ConquestEpisodes')
-    warrior = models.ForeignKey('ConquestWarriors')
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_episode_warriors'
-
-
-class ConquestEpisodes(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=30)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_episodes'
-
-
-class ConquestKingdomNames(models.Model):
-    kingdom = models.ForeignKey('ConquestKingdoms')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=9)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_kingdom_names'
-
-
-class ConquestKingdoms(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=9)
-    type = models.ForeignKey('Types')
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_kingdoms'
-
-
-class ConquestMaxLinks(models.Model):
-    warrior_rank = models.ForeignKey('ConquestWarriorRanks')
-    pokemon_species = models.ForeignKey('PokemonSpecies')
-    max_link = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_max_links'
-
-
-class ConquestMoveData(models.Model):
-    move = models.ForeignKey('Moves', primary_key=True)
-    power = models.IntegerField(blank=True, null=True)
-    accuracy = models.IntegerField(blank=True, null=True)
-    effect_chance = models.IntegerField(blank=True, null=True)
-    effect = models.ForeignKey('ConquestMoveEffects')
-    range = models.ForeignKey('ConquestMoveRanges')
-    displacement = models.ForeignKey('ConquestMoveDisplacements', blank=True,
-                                     null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_data'
-
-
-class ConquestMoveDisplacementProse(models.Model):
-    move_displacement = models.ForeignKey('ConquestMoveDisplacements')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=20, blank=True)
-    short_effect = models.CharField(max_length=128, blank=True)
-    effect = models.CharField(max_length=256, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_displacement_prose'
-
-
-class ConquestMoveDisplacements(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=18)
-    affects_target = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_displacements'
-
-
-class ConquestMoveEffectProse(models.Model):
-    conquest_move_effect = models.ForeignKey('ConquestMoveEffects')
-    local_language = models.ForeignKey('Languages')
-    short_effect = models.CharField(max_length=256, blank=True)
-    effect = models.CharField(max_length=5120, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_effect_prose'
-
-
-class ConquestMoveEffects(models.Model):
-    id = models.IntegerField(primary_key=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_effects'
-
-
-class ConquestMoveRangeProse(models.Model):
-    conquest_move_range = models.ForeignKey('ConquestMoveRanges')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=20, blank=True)
-    description = models.CharField(max_length=256, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_range_prose'
-
-
-class ConquestMoveRanges(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=16)
-    targets = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_move_ranges'
-
-
-class ConquestPokemonAbilities(models.Model):
-    pokemon_species = models.ForeignKey('PokemonSpecies')
-    slot = models.IntegerField()
-    ability = models.ForeignKey(Abilities)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_pokemon_abilities'
-
-
-class ConquestPokemonEvolution(models.Model):
-    evolved_species = models.ForeignKey('PokemonSpecies', primary_key=True)
-    required_stat = models.ForeignKey('ConquestStats', blank=True, null=True)
-    minimum_stat = models.IntegerField(blank=True, null=True)
-    minimum_link = models.IntegerField(blank=True, null=True)
-    kingdom = models.ForeignKey(ConquestKingdoms, blank=True, null=True)
-    warrior_gender = models.ForeignKey('Genders', blank=True, null=True)
-    item = models.ForeignKey('Items', blank=True, null=True)
-    recruiting_ko_required = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_pokemon_evolution'
-
-
-class ConquestPokemonMoves(models.Model):
-    pokemon_species = models.ForeignKey('PokemonSpecies', primary_key=True)
-    move = models.ForeignKey('Moves')
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_pokemon_moves'
-
-
-class ConquestPokemonStats(models.Model):
-    pokemon_species = models.ForeignKey('PokemonSpecies')
-    conquest_stat = models.ForeignKey('ConquestStats')
-    base_stat = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_pokemon_stats'
-
-
-class ConquestStatNames(models.Model):
-    conquest_stat = models.ForeignKey('ConquestStats')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=10)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_stat_names'
-
-
-class ConquestStats(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=7)
-    is_base = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_stats'
-
-
-class ConquestTransformationPokemon(models.Model):
-    transformation = models.ForeignKey('ConquestWarriorTransformation')
-    pokemon_species = models.ForeignKey('PokemonSpecies')
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_transformation_pokemon'
-
-
-class ConquestTransformationWarriors(models.Model):
-    transformation = models.ForeignKey('ConquestWarriorTransformation')
-    present_warrior = models.ForeignKey('ConquestWarriors')
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_transformation_warriors'
-
-
-class ConquestWarriorArchetypes(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=15)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_archetypes'
-
-
-class ConquestWarriorNames(models.Model):
-    warrior = models.ForeignKey('ConquestWarriors')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=10)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_names'
-
-
-class ConquestWarriorRankStatMap(models.Model):
-    warrior_rank = models.ForeignKey('ConquestWarriorRanks')
-    warrior_stat = models.ForeignKey('ConquestWarriorStats')
-    base_stat = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_rank_stat_map'
-
-
-class ConquestWarriorRanks(models.Model):
-    id = models.IntegerField(primary_key=True)
-    warrior = models.ForeignKey('ConquestWarriors')
-    rank = models.IntegerField()
-    skill = models.ForeignKey('ConquestWarriorSkills')
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_ranks'
-
-
-class ConquestWarriorSkillNames(models.Model):
-    skill = models.ForeignKey('ConquestWarriorSkills')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=15)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_skill_names'
-
-
-class ConquestWarriorSkills(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=15)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_skills'
-
-
-class ConquestWarriorSpecialties(models.Model):
-    warrior = models.ForeignKey('ConquestWarriors')
-    type = models.ForeignKey('Types')
-    slot = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_specialties'
-
-
-class ConquestWarriorStatNames(models.Model):
-    warrior_stat = models.ForeignKey('ConquestWarriorStats')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=15)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_stat_names'
-
-
-class ConquestWarriorStats(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=8)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_stats'
-
-
-class ConquestWarriorTransformation(models.Model):
-    transformed_warrior_rank = models.ForeignKey(ConquestWarriorRanks,
-                                                 primary_key=True)
-    is_automatic = models.BooleanField()
-    required_link = models.IntegerField(blank=True, null=True)
-    completed_episode = models.ForeignKey(ConquestEpisodes, blank=True,
-                                          null=True,
-                                          related_name='+')
-    current_episode = models.ForeignKey(ConquestEpisodes, blank=True, null=True)
-    distant_warrior = models.ForeignKey('ConquestWarriors', blank=True,
-                                        null=True)
-    female_warlord_count = models.IntegerField(blank=True, null=True)
-    pokemon_count = models.IntegerField(blank=True, null=True)
-    collection_type = models.ForeignKey('Types', blank=True, null=True)
-    warrior_count = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warrior_transformation'
-
-
-class ConquestWarriors(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=10)
-    gender = models.ForeignKey('Genders')
-    archetype = models.ForeignKey(ConquestWarriorArchetypes, blank=True,
-                                  null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conquest_warriors'
-
-
-class ContestCombos(models.Model):
-    first_move = models.ForeignKey('Moves', related_name='+')
-    second_move = models.ForeignKey('Moves')
-
-    class Meta:
-        managed = False
-        db_table = 'contest_combos'
-
-
-class ContestEffectProse(models.Model):
-    contest_effect = models.ForeignKey('ContestEffects')
-    local_language = models.ForeignKey('Languages')
-    flavor_text = models.CharField(max_length=64, blank=True)
-    effect = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'contest_effect_prose'
-
-
-class ContestEffects(models.Model):
-    id = models.IntegerField(primary_key=True)
-    appeal = models.SmallIntegerField()
-    jam = models.SmallIntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'contest_effects'
-
-
-class ContestTypeNames(models.Model):
-    contest_type = models.ForeignKey('ContestTypes')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=6, blank=True)
-    flavor = models.CharField(max_length=6, blank=True)
-    color = models.CharField(max_length=6, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'contest_type_names'
-
-
-class ContestTypes(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=6)
-
-    class Meta:
-        managed = False
-        db_table = 'contest_types'
-
-
 class EggGroupProse(models.Model):
     egg_group = models.ForeignKey('EggGroups')
     local_language = models.ForeignKey('Languages')
@@ -512,116 +59,13 @@ class EggGroupProse(models.Model):
 
 
 class EggGroups(models.Model):
+    # TODO: Merge EggGroupProse into here
     id = models.IntegerField(primary_key=True)
     identifier = models.CharField(max_length=16)
 
     class Meta:
         managed = False
         db_table = 'egg_groups'
-
-
-class EncounterConditionProse(models.Model):
-    encounter_condition = models.ForeignKey('EncounterConditions')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_condition_prose'
-
-
-class EncounterConditionValueMap(models.Model):
-    encounter = models.ForeignKey('Encounters')
-    encounter_condition_value = models.ForeignKey('EncounterConditionValues')
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_condition_value_map'
-
-
-class EncounterConditionValueProse(models.Model):
-    encounter_condition_value = models.ForeignKey('EncounterConditionValues')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_condition_value_prose'
-
-
-class EncounterConditionValues(models.Model):
-    id = models.IntegerField(primary_key=True)
-    encounter_condition = models.ForeignKey('EncounterConditions')
-    identifier = models.CharField(max_length=64)
-    is_default = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_condition_values'
-
-
-class EncounterConditions(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_conditions'
-
-
-class EncounterMethodProse(models.Model):
-    encounter_method = models.ForeignKey('EncounterMethods')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_method_prose'
-
-
-class EncounterMethods(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(unique=True, max_length=16)
-    order = models.IntegerField(unique=True)
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_methods'
-
-
-class EncounterSlots(models.Model):
-    id = models.IntegerField(primary_key=True)
-    version_group = models.ForeignKey('VersionGroups')
-    encounter_method = models.ForeignKey(EncounterMethods)
-    slot = models.IntegerField(blank=True, null=True)
-    rarity = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'encounter_slots'
-
-
-class Encounters(models.Model):
-    id = models.IntegerField(primary_key=True)
-    version = models.ForeignKey('Versions')
-    location_area = models.ForeignKey('LocationAreas')
-    encounter_slot = models.ForeignKey(EncounterSlots)
-    pokemon = models.ForeignKey('Pokemon')
-    min_level = models.IntegerField()
-    max_level = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'encounters'
-
-
-class EvolutionChains(models.Model):
-    id = models.IntegerField(primary_key=True)
-    baby_trigger_item = models.ForeignKey('Items', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'evolution_chains'
 
 
 class EvolutionTriggerProse(models.Model):
@@ -635,6 +79,7 @@ class EvolutionTriggerProse(models.Model):
 
 
 class EvolutionTriggers(models.Model):
+    # TODO: Merge EvolutionTriggerProse into here
     id = models.IntegerField(primary_key=True)
     identifier = models.CharField(max_length=16)
 
@@ -653,36 +98,6 @@ class Experience(models.Model):
         db_table = 'experience'
 
 
-class Genders(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=10)
-
-    class Meta:
-        managed = False
-        db_table = 'genders'
-
-
-class GenerationNames(models.Model):
-    generation = models.ForeignKey('Generations')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'generation_names'
-
-
-class Generations(models.Model):
-    id = models.IntegerField(primary_key=True)
-    main_region = models.ForeignKey('Regions')
-    canonical_pokedex = models.ForeignKey('Pokedexes')
-    identifier = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'generations'
-
-
 class GrowthRateProse(models.Model):
     growth_rate = models.ForeignKey('GrowthRates')
     local_language = models.ForeignKey('Languages')
@@ -694,6 +109,7 @@ class GrowthRateProse(models.Model):
 
 
 class GrowthRates(models.Model):
+    # TODO: Merge GrowthRateProse into here
     id = models.IntegerField(primary_key=True)
     identifier = models.CharField(max_length=20)
     formula = models.CharField(max_length=500)
@@ -701,76 +117,6 @@ class GrowthRates(models.Model):
     class Meta:
         managed = False
         db_table = 'growth_rates'
-
-
-class ItemCategories(models.Model):
-    id = models.IntegerField(primary_key=True)
-    pocket = models.ForeignKey('ItemPockets')
-    identifier = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'item_categories'
-
-
-class ItemCategoryProse(models.Model):
-    item_category = models.ForeignKey(ItemCategories)
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'item_category_prose'
-
-
-class ItemFlagMap(models.Model):
-    item = models.ForeignKey('Items')
-    item_flag = models.ForeignKey('ItemFlags')
-
-    class Meta:
-        managed = False
-        db_table = 'item_flag_map'
-
-
-class ItemFlagProse(models.Model):
-    item_flag = models.ForeignKey('ItemFlags')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=24, blank=True)
-    description = models.CharField(max_length=64, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'item_flag_prose'
-
-
-class ItemFlags(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=24)
-
-    class Meta:
-        managed = False
-        db_table = 'item_flags'
-
-
-class ItemFlavorSummaries(models.Model):
-    item = models.ForeignKey('Items')
-    local_language = models.ForeignKey('Languages')
-    flavor_summary = models.CharField(max_length=512, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'item_flavor_summaries'
-
-
-class ItemFlavorText(models.Model):
-    item = models.ForeignKey('Items')
-    version_group = models.ForeignKey('VersionGroups')
-    language = models.ForeignKey('Languages')
-    flavor_text = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'item_flavor_text'
 
 
 class ItemFlingEffectProse(models.Model):
@@ -784,21 +130,12 @@ class ItemFlingEffectProse(models.Model):
 
 
 class ItemFlingEffects(models.Model):
+    # TODO: Merge ItemFlingEffectProse into here
     id = models.IntegerField(primary_key=True)
 
     class Meta:
         managed = False
         db_table = 'item_fling_effects'
-
-
-class ItemGameIndices(models.Model):
-    item = models.ForeignKey('Items')
-    generation = models.ForeignKey(Generations)
-    game_index = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'item_game_indices'
 
 
 class ItemNames(models.Model):
@@ -809,25 +146,6 @@ class ItemNames(models.Model):
     class Meta:
         managed = False
         db_table = 'item_names'
-
-
-class ItemPocketNames(models.Model):
-    item_pocket = models.ForeignKey('ItemPockets')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'item_pocket_names'
-
-
-class ItemPockets(models.Model):
-    id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'item_pockets'
 
 
 class ItemProse(models.Model):
@@ -842,6 +160,7 @@ class ItemProse(models.Model):
 
 
 class Items(models.Model):
+    # TODO: Merge ItemProse and ItemNames into here
     id = models.IntegerField(primary_key=True)
     identifier = models.CharField(max_length=20)
     category = models.ForeignKey(ItemCategories)
@@ -852,71 +171,6 @@ class Items(models.Model):
     class Meta:
         managed = False
         db_table = 'items'
-
-
-class LanguageNames(models.Model):
-    language = models.ForeignKey('Languages', related_name='+')
-    local_language = models.ForeignKey('Languages')
-    name = models.CharField(max_length=16)
-
-    class Meta:
-        managed = False
-        db_table = 'language_names'
-
-
-class Languages(models.Model):
-    id = models.IntegerField(primary_key=True)
-    iso639 = models.CharField(max_length=2)
-    iso3166 = models.CharField(max_length=2)
-    identifier = models.CharField(max_length=16)
-    official = models.BooleanField()
-    order = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'languages'
-
-
-class LocationAreaEncounterRates(models.Model):
-    location_area = models.ForeignKey('LocationAreas')
-    encounter_method = models.ForeignKey(EncounterMethods)
-    version = models.ForeignKey('Versions')
-    rate = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'location_area_encounter_rates'
-
-
-class LocationAreaProse(models.Model):
-    location_area = models.ForeignKey('LocationAreas')
-    local_language = models.ForeignKey(Languages)
-    name = models.CharField(max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'location_area_prose'
-
-
-class LocationAreas(models.Model):
-    id = models.IntegerField(primary_key=True)
-    location = models.ForeignKey('Locations')
-    game_index = models.IntegerField()
-    identifier = models.CharField(max_length=64, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'location_areas'
-
-
-class LocationGameIndices(models.Model):
-    location = models.ForeignKey('Locations')
-    generation = models.ForeignKey(Generations)
-    game_index = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'location_game_indices'
 
 
 class LocationNames(models.Model):
@@ -930,6 +184,7 @@ class LocationNames(models.Model):
 
 
 class Locations(models.Model):
+    # TODO: Merge LocationNames into here
     id = models.IntegerField(primary_key=True)
     region = models.ForeignKey('Regions', blank=True, null=True)
     identifier = models.CharField(max_length=64)
