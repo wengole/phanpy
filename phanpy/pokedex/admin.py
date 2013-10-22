@@ -1,3 +1,3 @@
-from django.contrib import admin
+from .autoregister import autoregister
 
-# Register your models here.
+autoregister('pokedex')
