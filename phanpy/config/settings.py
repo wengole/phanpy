@@ -48,12 +48,14 @@ class Common(Configuration):
     THIRD_PARTY_APPS = (
         'south',  # Database migration helpers:
         'crispy_forms',  # Form layouts
+        'avatar',  # for user avatars
     )
 
     # Apps specific for this project go here.
     LOCAL_APPS = (
         'users',  # custom users app
         # Your stuff: custom apps go here
+        'pokedex',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -281,7 +283,7 @@ class Local(Common):
 
     ########## Mail settings
     EMAIL_HOST = "localhost"
-    EMAIL_PORT = 1025
+    EMAIL_PORT = 25
     ########## End mail settings
 
     ########## django-debug-toolbar
@@ -360,7 +362,7 @@ class Production(Common):
 
     ########## EMAIL
     DEFAULT_FROM_EMAIL = values.Value(
-            'phanpy <phanpy-noreply@example.com>')
+            'phanpy <phanpy-noreply@phanpy.net>')
     EMAIL_HOST = values.Value('smtp.sendgrid.com')
     EMAIL_HOST_PASSWORD = values.SecretValue(environ_prefix="", environ_name="SENDGRID_PASSWORD")
     EMAIL_HOST_USER = values.SecretValue(environ_prefix="", environ_name="SENDGRID_USERNAME")
