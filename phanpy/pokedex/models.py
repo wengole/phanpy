@@ -423,7 +423,8 @@ class ConquestWarriorTransformation(models.Model):
     is_automatic = models.BooleanField()
     required_link = models.IntegerField(blank=True, null=True)
     completed_episode = models.ForeignKey(ConquestEpisodes, blank=True,
-                                          null=True)
+                                          null=True,
+                                          related_name='+')
     current_episode = models.ForeignKey(ConquestEpisodes, blank=True, null=True)
     distant_warrior = models.ForeignKey('ConquestWarriors', blank=True,
                                         null=True)
@@ -450,7 +451,7 @@ class ConquestWarriors(models.Model):
 
 
 class ContestCombos(models.Model):
-    first_move = models.ForeignKey('Moves')
+    first_move = models.ForeignKey('Moves', related_name='+')
     second_move = models.ForeignKey('Moves')
 
     class Meta:
@@ -854,7 +855,7 @@ class Items(models.Model):
 
 
 class LanguageNames(models.Model):
-    language = models.ForeignKey('Languages')
+    language = models.ForeignKey('Languages', related_name='+')
     local_language = models.ForeignKey('Languages')
     name = models.CharField(max_length=16)
 
@@ -1247,9 +1248,9 @@ class NaturePokeathlonStats(models.Model):
 class Natures(models.Model):
     id = models.IntegerField(primary_key=True)
     identifier = models.CharField(max_length=8)
-    decreased_stat = models.ForeignKey('Stats')
+    decreased_stat = models.ForeignKey('Stats', related_name='+')
     increased_stat = models.ForeignKey('Stats')
-    hates_flavor = models.ForeignKey(ContestTypes)
+    hates_flavor = models.ForeignKey(ContestTypes, related_name='+')
     likes_flavor = models.ForeignKey(ContestTypes)
 
     class Meta:
@@ -1337,6 +1338,9 @@ class Pokemon(models.Model):
     order = models.IntegerField()
     is_default = models.BooleanField()
 
+    def __unicode__(self):
+        return u'%s' % self.species.names.get(local_language__iso639='en').name
+
     class Meta:
         managed = False
         db_table = 'pokemon'
@@ -1393,19 +1397,27 @@ class PokemonEggGroups(models.Model):
 
 class PokemonEvolution(models.Model):
     id = models.IntegerField(primary_key=True)
-    evolved_species = models.ForeignKey('PokemonSpecies')
-    evolution_trigger = models.ForeignKey(EvolutionTriggers)
+    evolved_species = models.ForeignKey('PokemonSpecies',
+                                        related_name='+')
+    evolution_trigger = models.ForeignKey(EvolutionTriggers, related_name='+')
     trigger_item = models.ForeignKey(Items, blank=True, null=True)
     minimum_level = models.IntegerField(blank=True, null=True)
     gender = models.ForeignKey(Genders, blank=True, null=True)
     location = models.ForeignKey(Locations, blank=True, null=True)
-    held_item = models.ForeignKey(Items, blank=True, null=True)
-    time_of_day = models.TextField(blank=True)  # TODO: This field type is a guess.
+    held_item = models.ForeignKey(Items, blank=True, null=True,
+                                  related_name='+')
+    time_of_day = models.TextField(blank=True,
+                                   choices=(
+                                       ('', 'Any time'),
+                                       ('day', 'Day'),
+                                       ('night', 'Night'),
+                                   ))
     known_move = models.ForeignKey(Moves, blank=True, null=True)
     minimum_happiness = models.IntegerField(blank=True, null=True)
     minimum_beauty = models.IntegerField(blank=True, null=True)
     relative_physical_stats = models.IntegerField(blank=True, null=True)
-    party_species = models.ForeignKey('PokemonSpecies', blank=True, null=True)
+    party_species = models.ForeignKey('PokemonSpecies', blank=True,
+                                      null=True, related_name='+')
     trade_species = models.ForeignKey('PokemonSpecies', blank=True, null=True)
 
     class Meta:
@@ -1575,6 +1587,9 @@ class PokemonSpecies(models.Model):
     order = models.IntegerField()
     conquest_order = models.IntegerField(blank=True, null=True)
 
+    def __unicode__(self):
+        return u'%s' % self.names.get(local_language__iso639='en').name
+
     class Meta:
         managed = False
         db_table = 'pokemon_species'
@@ -1602,7 +1617,8 @@ class PokemonSpeciesFlavorText(models.Model):
 
 
 class PokemonSpeciesNames(models.Model):
-    pokemon_species = models.ForeignKey(PokemonSpecies)
+    pokemon_species = models.ForeignKey(PokemonSpecies, related_name='names',
+                                        db_column='id')
     local_language = models.ForeignKey(Languages)
     name = models.CharField(max_length=20, blank=True)
     genus = models.CharField(max_length=16, blank=True)
@@ -1705,7 +1721,7 @@ class Stats(models.Model):
 
 
 class SuperContestCombos(models.Model):
-    first_move = models.ForeignKey(Moves)
+    first_move = models.ForeignKey(Moves, related_name='+')
     second_move = models.ForeignKey(Moves)
 
     class Meta:
@@ -1733,7 +1749,7 @@ class SuperContestEffects(models.Model):
 
 
 class TypeEfficacy(models.Model):
-    damage_type = models.ForeignKey('Types')
+    damage_type = models.ForeignKey('Types', related_name='+')
     target_type = models.ForeignKey('Types')
     damage_factor = models.IntegerField()
 
