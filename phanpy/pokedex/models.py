@@ -66,60 +66,6 @@ class AbilityProse(models.Model):
         db_table = 'ability_prose'
 
 
-class AccountEmailaddress(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user_id = models.IntegerField()
-    email = models.CharField(unique=True, max_length=75)
-    verified = models.BooleanField()
-    primary = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'account_emailaddress'
-
-
-class AccountEmailconfirmation(models.Model):
-    id = models.IntegerField(primary_key=True)
-    email_address = models.ForeignKey(AccountEmailaddress)
-    created = models.DateTimeField()
-    sent = models.DateTimeField(blank=True, null=True)
-    key = models.CharField(unique=True, max_length=64)
-
-    class Meta:
-        managed = False
-        db_table = 'account_emailconfirmation'
-
-
-class AuthGroup(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(unique=True, max_length=80)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group'
-
-
-class AuthGroupPermissions(models.Model):
-    id = models.IntegerField(primary_key=True)
-    group = models.ForeignKey(AuthGroup)
-    permission = models.ForeignKey('AuthPermission')
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group_permissions'
-
-
-class AuthPermission(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
-    content_type = models.ForeignKey('DjangoContentType')
-    codename = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_permission'
-
-
 class Berries(models.Model):
     id = models.IntegerField(primary_key=True)
     item = models.ForeignKey('Items')
@@ -552,52 +498,6 @@ class ContestTypes(models.Model):
     class Meta:
         managed = False
         db_table = 'contest_types'
-
-
-class DjangoAdminLog(models.Model):
-    id = models.IntegerField(primary_key=True)
-    action_time = models.DateTimeField()
-    user_id = models.IntegerField()
-    content_type = models.ForeignKey('DjangoContentType', blank=True, null=True)
-    object_id = models.TextField(blank=True)
-    object_repr = models.CharField(max_length=200)
-    action_flag = models.SmallIntegerField()
-    change_message = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_admin_log'
-
-
-class DjangoContentType(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100)
-    app_label = models.CharField(max_length=100)
-    model = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'django_content_type'
-
-
-class DjangoSession(models.Model):
-    session_key = models.CharField(primary_key=True, max_length=40)
-    session_data = models.TextField()
-    expire_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_session'
-
-
-class DjangoSite(models.Model):
-    id = models.IntegerField(primary_key=True)
-    domain = models.CharField(max_length=100)
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        managed = False
-        db_table = 'django_site'
 
 
 class EggGroupProse(models.Model):
@@ -1762,67 +1662,6 @@ class Regions(models.Model):
         db_table = 'regions'
 
 
-class SocialaccountSocialaccount(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey('UsersUser')
-    last_login = models.DateTimeField()
-    date_joined = models.DateTimeField()
-    provider = models.CharField(max_length=30)
-    uid = models.CharField(max_length=255)
-    extra_data = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'socialaccount_socialaccount'
-
-
-class SocialaccountSocialapp(models.Model):
-    id = models.IntegerField(primary_key=True)
-    provider = models.CharField(max_length=30)
-    name = models.CharField(max_length=40)
-    key = models.CharField(max_length=100)
-    secret = models.CharField(max_length=100)
-    client_id = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'socialaccount_socialapp'
-
-
-class SocialaccountSocialappSites(models.Model):
-    id = models.IntegerField(primary_key=True)
-    socialapp = models.ForeignKey(SocialaccountSocialapp)
-    site = models.ForeignKey(DjangoSite)
-
-    class Meta:
-        managed = False
-        db_table = 'socialaccount_socialapp_sites'
-
-
-class SocialaccountSocialtoken(models.Model):
-    id = models.IntegerField(primary_key=True)
-    app = models.ForeignKey(SocialaccountSocialapp)
-    account = models.ForeignKey(SocialaccountSocialaccount)
-    token = models.TextField()
-    token_secret = models.CharField(max_length=200)
-    expires_at = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'socialaccount_socialtoken'
-
-
-class SouthMigrationhistory(models.Model):
-    id = models.IntegerField(primary_key=True)
-    app_name = models.CharField(max_length=255)
-    migration = models.CharField(max_length=255)
-    applied = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'south_migrationhistory'
-
-
 class StatHintNames(models.Model):
     stat_hint = models.ForeignKey('StatHints')
     local_language = models.ForeignKey(Languages)
@@ -1922,44 +1761,6 @@ class Types(models.Model):
     class Meta:
         managed = False
         db_table = 'types'
-
-
-class UsersUser(models.Model):
-    id = models.IntegerField(primary_key=True)
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField()
-    is_superuser = models.BooleanField()
-    username = models.CharField(unique=True, max_length=30)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    email = models.CharField(max_length=75)
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
-    date_joined = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'users_user'
-
-
-class UsersUserGroups(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(UsersUser)
-    group = models.ForeignKey(AuthGroup)
-
-    class Meta:
-        managed = False
-        db_table = 'users_user_groups'
-
-
-class UsersUserUserPermissions(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(UsersUser)
-    permission = models.ForeignKey(AuthPermission)
-
-    class Meta:
-        managed = False
-        db_table = 'users_user_user_permissions'
 
 
 class VersionGroupPokemonMoveMethods(models.Model):
